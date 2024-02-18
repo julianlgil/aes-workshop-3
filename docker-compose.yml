@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14.6
+    env_file:
+      - .env
+    volumes:
+      - .database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    ports:
+      - 5434:5434
+    networks:
+      - main
+
+  rabbitmq:
+    image: rabbitmq:3.9.29-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq/
+    networks:
+      - main
+
+volumes:
+    rabbitmq_data:
+    rabbitmq_log:
+
+networks:
+  main:
+    driver: bridge
