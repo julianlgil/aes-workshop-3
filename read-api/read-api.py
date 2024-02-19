@@ -12,11 +12,11 @@ chan = connection.channel()
 # declare a new queue
 # durable flag is set so that messages are retained
 # in the rabbitmq volume even between restarts
-chan.queue_declare(queue='hello', durable=True)
+chan.queue_declare(queue='messages', durable=True)
 
 # publish a 100 messages to the queue
-for i in range(10):
-    chan.basic_publish(exchange='', routing_key='hello',
+for i in range(5):
+    chan.basic_publish(exchange='', routing_key='messages',
                        body='Hola ¿Todo bien?', properties=pika.BasicProperties(delivery_mode=2))
     print("Produced the message")
 

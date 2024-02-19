@@ -21,33 +21,32 @@ services:
       - rabbitmq_log:/var/log/rabbitmq/
 
   # producer container builds the producer image and produces message to the queue
-  producer:
-    build: producer
+  read-api:
+    build: read-api
     depends_on:
         - rabbitmq
     environment:
         AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
     volumes:
-      - ./producer:/usr/src/app/producer
+      - ./read-api:/usr/src/app/read-api
   
-  # we spawn 2 consumer containers to run parallely on the same queue
-  consumer1:
-    build: consumer
+  filter:
+    build: filter
     depends_on:
         - rabbitmq
     environment:
         AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
     volumes:
-      - ./consumer:/usr/src/app/consumer
+      - ./filter:/usr/src/app/filter
 
-  consumer2:
-    build: consumer
+  write-db:
+    build: write-db
     depends_on:
         - rabbitmq
     environment:
         AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
     volumes:
-      - ./consumer:/usr/src/app/consumer
+      - ./write-db:/usr/src/app/write-db
 
 volumes:
     rabbitmq_data:

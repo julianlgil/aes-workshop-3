@@ -8,10 +8,10 @@ RUN pip install pika
 ENV PYTHONUNBUFFERED=1
 
 # declare the source directory
-WORKDIR /usr/src/app/producer
+WORKDIR /usr/src/app/filter
 
 # copy the file
-COPY producer.py .
+COPY filter.py .
 
 # start command
-CMD [ "python", "producer.py" ]
+CMD [ "python", "filter.py" ]

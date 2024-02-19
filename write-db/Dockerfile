@@ -8,10 +8,10 @@ RUN pip install pika
 ENV PYTHONUNBUFFERED=1
 
 # declare the source directory
-WORKDIR /usr/src/app/consumer
+WORKDIR /usr/src/app/write-db
 
 # copy the file
-COPY consumer.py .
+COPY write-db.py .
 
 # start command
-CMD [ "python", "consumer.py" ]
+CMD [ "python", "write-db.py" ]

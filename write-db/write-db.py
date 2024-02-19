@@ -15,7 +15,7 @@ chan = connection.channel()
 # declare a new queue
 # durable flag is set so that messages are retained
 # in the rabbitmq volume even between restarts
-chan.queue_declare(queue='hello', durable=True)
+chan.queue_declare(queue='filtered-messages', durable=True)
 
 
 def receive_msg(ch, method, properties, body):
@@ -24,7 +24,7 @@ def receive_msg(ch, method, properties, body):
     sleep for 2 seconds
     ack the message"""
 
-    print('received msg : ', body.decode('utf-8'))
+    print('to write on DB : ', body.decode('utf-8'))
     time.sleep(2)
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -34,7 +34,7 @@ def receive_msg(ch, method, properties, body):
 chan.basic_qos(prefetch_count=1)
 
 # define the queue consumption
-chan.basic_consume(queue='hello',
+chan.basic_consume(queue='filtered-messages',
                    on_message_callback=receive_msg)
 
 print("Waiting to consume")
