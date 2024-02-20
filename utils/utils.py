@@ -5,9 +5,8 @@ import os
 class RabbitMQ:
     def __init__(self, amqp_url) -> None:
         url_params = pika.URLParameters(amqp_url)
-        connection = pika.BlockingConnection(url_params)
-        self.chan = connection.channel()
-
+        self.connection = pika.BlockingConnection(url_params)
+        self.chan = self.connection.channel()
 
     def publish(self, queue, message) -> None:
         self.chan.queue_declare(queue=queue, durable=True)
@@ -20,6 +19,10 @@ class RabbitMQ:
         self.chan.basic_consume(queue=queue, on_message_callback=callback)
         print("Waiting to consume ", queue)
         self.chan.start_consuming()
+    
+    def close_connection(self) -> None:
+        self.chan.close()
+        self.connection.close()
 
 class CallBack:
     def __init__(self, rabbit) -> None:
