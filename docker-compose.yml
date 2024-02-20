@@ -18,6 +18,8 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/data
       - rabbitmq_log:/var/log/rabbitmq/
+    logging:
+      driver: none
 
   # producer container builds the producer image and produces message to the queue
   read-api:
