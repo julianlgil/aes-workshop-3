@@ -26,9 +26,8 @@ services:
     build: read-api
     depends_on:
         - rabbitmq
-    environment:
-        AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
-        PYTHONUNBUFFERED: 1
+    env_file:
+      - .env
     volumes:
       - ./read-api:/usr/src/app/read-api
       - ./utils:/usr/src/app/read-api/utils

@@ -11,7 +11,7 @@ class RabbitMQ:
     def publish(self, queue, message) -> None:
         self.chan.queue_declare(queue=queue, durable=True)
         self.chan.basic_publish(exchange='', routing_key=queue,
-                       body=message, properties=pika.BasicProperties(delivery_mode=2))
+                        body=message, properties=pika.BasicProperties(delivery_mode=2))
 
     def subscribe(self, queue, callback) -> None:
         self.chan.queue_declare(queue=queue, durable=True)
