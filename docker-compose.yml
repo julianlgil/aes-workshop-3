@@ -14,7 +14,6 @@ services:
     image: rabbitmq:3.9.29-management-alpine
     container_name: rabbitmq
     ports:
-        # - '5672:5672'
         - '15672:15672'
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/data
@@ -27,8 +26,10 @@ services:
         - rabbitmq
     environment:
         AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
+        PYTHONUNBUFFERED: 1
     volumes:
       - ./read-api:/usr/src/app/read-api
+      - ./utils:/usr/src/app/read-api/utils
   
   filter:
     build: filter
@@ -36,8 +37,10 @@ services:
         - rabbitmq
     environment:
         AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
+        PYTHONUNBUFFERED: 1
     volumes:
       - ./filter:/usr/src/app/filter
+      - ./utils:/usr/src/app/filter/utils
 
   write-db:
     build: write-db
@@ -45,8 +48,10 @@ services:
         - rabbitmq
     environment:
         AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
+        PYTHONUNBUFFERED: 1
     volumes:
       - ./write-db:/usr/src/app/write-db
+      - ./utils:/usr/src/app/write-db/utils
 
 volumes:
     rabbitmq_data:

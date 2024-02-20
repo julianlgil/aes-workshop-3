@@ -1,42 +1,21 @@
-import pika
+from utils.utils import RabbitMQ
 import time
 import os
 
-# read rabbitmq connection url from environment variable
-amqp_url = os.environ['AMQP_URL']
-# from pdb import set_trace; set_trace()
+class CallBack:
+    def __init__(self, rabbit) -> None:
+        self.rabbit = rabbit
+    
+    def cb(self, ch, method, properties, body):
+        """function to receive the message from rabbitmq
+        print it
+        sleep for 2 seconds
+        ack the message"""
 
-url_params = pika.URLParameters(amqp_url)
+        print('to write on DB : ', body.decode('utf-8'))
+        time.sleep(2)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
-# connect to rabbitmq
-connection = pika.BlockingConnection(url_params)
-chan = connection.channel()
-
-# declare a new queue
-# durable flag is set so that messages are retained
-# in the rabbitmq volume even between restarts
-chan.queue_declare(queue='filtered-messages', durable=True)
-
-
-def receive_msg(ch, method, properties, body):
-    """function to receive the message from rabbitmq
-    print it
-    sleep for 2 seconds
-    ack the message"""
-
-    print('to write on DB : ', body.decode('utf-8'))
-    time.sleep(2)
-    ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-# to make sure the consumer receives only one message at a time
-# next message is received only after acking the previous one
-chan.basic_qos(prefetch_count=1)
-
-# define the queue consumption
-chan.basic_consume(queue='filtered-messages',
-                   on_message_callback=receive_msg)
-
-print("Waiting to consume")
-# start consuming
-chan.start_consuming()
+if __name__ == '__main__':
+    rabbit = RabbitMQ(amqp_url = os.environ['AMQP_URL'])
+    rabbit.subscribe('filtered-messages', CallBack(rabbit).cb)
