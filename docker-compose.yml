@@ -8,25 +8,53 @@ services:
     volumes:
       - .database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
     ports:
-      - 5434:5434
-    networks:
-      - main
+      - 5432:5432
 
   rabbitmq:
     image: rabbitmq:3.9.29-management-alpine
+    container_name: rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+        - '15672:15672'
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_data:/var/lib/rabbitmq/data
       - rabbitmq_log:/var/log/rabbitmq/
-    networks:
-      - main
+    logging:
+      driver: none
+
+  # producer container builds the producer image and produces message to the queue
+  read-api:
+    build: read-api
+    depends_on:
+        - rabbitmq
+    environment:
+        AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
+        PYTHONUNBUFFERED: 1
+    volumes:
+      - ./read-api:/usr/src/app/read-api
+      - ./utils:/usr/src/app/read-api/utils
+  
+  filter:
+    build: filter
+    depends_on:
+        - rabbitmq
+    environment:
+        AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
+        PYTHONUNBUFFERED: 1
+    volumes:
+      - ./filter:/usr/src/app/filter
+      - ./utils:/usr/src/app/filter/utils
+
+  write-db:
+    build: write-db
+    depends_on:
+        - rabbitmq
+    environment:
+        AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
+        PYTHONUNBUFFERED: 1
+    volumes:
+      - ./write-db:/usr/src/app/write-db
+      - ./utils:/usr/src/app/write-db/utils
 
 volumes:
     rabbitmq_data:
     rabbitmq_log:
-
-networks:
-  main:
-    driver: bridge
