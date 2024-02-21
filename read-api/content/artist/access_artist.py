@@ -1,10 +1,9 @@
-import spotipy
-import base64
-from requests import post, get
+from requests import get
 import json
-import Content.Token.access_token as access_token
+import content.token.access_token as access_token
 
-def search_for_artist(token, year,limit):
+
+def search_for_artist(token, year, limit):
     url = "https://api.spotify.com/v1/search?"
     headers = access_token.get_auth_header(token)
     query = f"q=year:{year}&type=artist&limit=" + limit

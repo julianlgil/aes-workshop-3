@@ -1,8 +1,6 @@
-import spotipy
 import base64
-from requests import post, get
+from requests import post
 import json
-import Content.Token.access as access
 import os
 
 def get_token():
