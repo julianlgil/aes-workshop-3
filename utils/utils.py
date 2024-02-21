@@ -2,6 +2,7 @@ import pika
 import time
 import os
 
+
 class RabbitMQ:
     def __init__(self, amqp_url) -> None:
         url_params = pika.URLParameters(amqp_url)
@@ -11,7 +12,7 @@ class RabbitMQ:
     def publish(self, queue, message) -> None:
         self.chan.queue_declare(queue=queue, durable=True)
         self.chan.basic_publish(exchange='', routing_key=queue,
-                        body=message, properties=pika.BasicProperties(delivery_mode=2))
+                                body=message, properties=pika.BasicProperties(delivery_mode=2))
 
     def subscribe(self, queue, callback) -> None:
         self.chan.queue_declare(queue=queue, durable=True)
@@ -19,15 +20,16 @@ class RabbitMQ:
         self.chan.basic_consume(queue=queue, on_message_callback=callback)
         print("Waiting to consume ", queue)
         self.chan.start_consuming()
-    
+
     def close_connection(self) -> None:
         self.chan.close()
         self.connection.close()
 
+
 class CallBack:
     def __init__(self, rabbit) -> None:
         self.rabbit = rabbit
-    
+
     def cb(self, ch, method, properties, body):
         """function to receive the message from rabbitmq
         print it
@@ -39,6 +41,7 @@ class CallBack:
         time.sleep(2)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+
 if __name__ == '__main__':
-    rabbit = RabbitMQ(amqp_url = os.environ['AMQP_URL'])
+    rabbit = RabbitMQ(amqp_url=os.environ['AMQP_URL'])
     rabbit.subscribe('messages', CallBack(rabbit).cb)

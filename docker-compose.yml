@@ -36,9 +36,8 @@ services:
     build: filter
     depends_on:
         - rabbitmq
-    environment:
-        AMQP_URL: 'amqp://rabbitmq?connection_attempts=10&retry_delay=10'
-        PYTHONUNBUFFERED: 1
+    env_file:
+      - .env
     volumes:
       - ./filter:/usr/src/app/filter
       - ./utils:/usr/src/app/filter/utils
