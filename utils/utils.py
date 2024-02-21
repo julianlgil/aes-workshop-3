@@ -40,8 +40,3 @@ class CallBack:
         self.rabbit.publish('filtered-messages', 'this is the message')
         time.sleep(2)
         ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-if __name__ == '__main__':
-    rabbit = RabbitMQ(amqp_url=os.environ['AMQP_URL'])
-    rabbit.subscribe('messages', CallBack(rabbit).cb)
