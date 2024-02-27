@@ -15,7 +15,7 @@ class Filter:
         return result != []
 
     def filter_by_genres(self, source: List[Dict]):
-        print(source)
+        ## noisy print(source)
         filter_result = {}
         for key in self.filter_keys:
             items_by_key = [{
@@ -32,11 +32,14 @@ class RabbitCallback:
         self.rabbit = rabbit
 
     def execute(self, ch, method, properties, body):
-        source = body.decode('utf-8')
-        filtered_message = Filter().filter_by_genres(source=json.loads(source))
-        self.rabbit.publish(self.queue_to_publish, json.dumps(filtered_message))
-        time.sleep(2)
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+        try:
+            source = body.decode('utf-8')
+            filtered_message = Filter().filter_by_genres(source=json.loads(source))
+            self.rabbit.publish(self.queue_to_publish, json.dumps(filtered_message))
+            time.sleep(2)
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        except Exception as e:
+            print(f"Error con el filtro: {e}")
 
 
 if __name__ == '__main__':
