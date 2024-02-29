@@ -1,6 +1,6 @@
-# year="2000"
-# Limit 0-50
-limit="50"
-random_year_ini=1960
-random_year_fin=2023
-random_year_quantity=60
+import os
+
+limit = os.getenv('SEARCH_LIMIT')
+random_year_ini = int(os.getenv('INITIAL_YEAR'))
+random_year_fin = int(os.getenv('FINAL_YEAR'))
+random_year_quantity = int(os.getenv('RANDOM_YEARS_QUANTITY'))
