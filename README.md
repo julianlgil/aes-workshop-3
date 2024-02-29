@@ -1,5 +1,8 @@
 # aes-workshop-3
 
+
+![Flujo basico kafka - Página 3](https://github.com/EduardoChaparro89/aes-workshop-3/assets/158863677/9cd03a87-33db-453a-b06e-5bbbf899b32c)
+
 ## .env file
 
 To run the service locally or using docker, first create you `.env` file by running:
